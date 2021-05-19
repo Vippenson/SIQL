@@ -22,7 +22,14 @@
   </style>
 </head>
 <div>Selectors in SIQL</div>
-<textarea id='input'></textarea>
+<textarea id='input'>
+DefaultInventory1 := (name is "B2525 Fixer" * 1) or (type is MISC * 0);
+NewStuff          := except  DefaultInventory1;
+
+DefaultInventoryWeapons := name is "B2525 Fixer" and type is WEAPON * 1;
+DefaultInventoryMiscs   := type is MISC * 0;
+DefaultInventory2       := DefaultInventoryWeapons also DefaultInventoryMiscs;  
+</textarea>
 <center><button onclick="parse()">Parse and Generate</button></center>
 <div>Generated Mod Config</div>
 <textarea id='output'></textarea>
