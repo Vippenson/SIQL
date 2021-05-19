@@ -1,0 +1,29 @@
+<html>
+<head>
+  <script src="jsDump.js"></script>
+  <script src="parser.js"></script>
+  <script>
+    function buildErrorMessage(e) {
+        return e.location !== undefined
+            ? "Line " + e.location.start.line + ", column " + e.location.start.column + ": " + e.message
+            : e.message;
+    }
+    function parse() {
+        try {
+            var output = PARSER.parse(document.getElementById('input').value);
+            document.getElementById('output').value = jsDump.parse(output);
+        } catch (e) {
+            document.getElementById('output').value = buildErrorMessage(e);
+        }
+    }
+  </script>
+  <style>
+    textarea { width: 100%; height: 40%}
+  </style>
+</head>
+<div>Selectors in SIQL</div>
+<textarea id='input'></textarea>
+<center><button onclick="parse()">Parse and Generate</button></center>
+<div>Generated Mod Config</div>
+<textarea id='output'></textarea>
+</html>
