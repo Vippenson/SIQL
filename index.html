@@ -23,16 +23,22 @@
 </head>
 <div>Selectors in SIQL</div>
 <textarea id='input'>
-DefaultInventoryWeapons = name is "B2525 Fixer" & type is WEAPON * 1;
-DefaultInventoryMiscs   = type is MISC * all;
-DefaultInventory2       = [ DefaultInventoryWeapons , DefaultInventoryMiscs ];
- 
+DefaultInventory         = [ name is "B2525 Fixer" & type is WEAPON * 1
+                           , type is MISC x all ];
+NewStuff1                = [ exclude  DefaultInventory , everything ];
 
-DefaultInventory3       = [ "B2525 Fixer" * 1 , type is MISC ];
-DefaultInventory4       = [ "B2525 Fixer" * 1 , MISC ];
+DefaultInventoryWeapons  = [ name is "B2525 Fixer" & type is WEAPON * 1 ];
+DefaultInventoryMiscs    = [ type is MISC x all ];
+DefaultInventory2        = [ DefaultInventoryWeapons , DefaultInventoryMiscs ];
+NewStuff2                = [ exclude  DefaultInventory2 , everything ];
 
-DefaultInventoryAll4    = [ "B2525 Fixer" * 1 , type is MISC * all ];
-DefaultInventoryAll5    = [ "B2525 Fixer"     , MISC * all ];
+DefaultInventoryWeapons2 = [ "B2525 Fixer" & type is WEAPON x 1 ];
+DefaultInventoryWeapons3 = [ "B2525 Fixer" & WEAPON x 1 ];
+DefaultInventoryWeapons4 = [ "B2525 Fixer" & WEAPON ];
+DefaultInventoryWeapons5 = "B2525 Fixer" & WEAPON ;
+DefaultInventoryWeapons6 = "B2525 Fixer";
+DefaultInventory3        = [ "B2525 Fixer"
+                           , MISC x all ];
 </textarea>
 <center><button onclick="parse()">Parse and Generate</button></center>
 <div>Generated Mod Config</div>
