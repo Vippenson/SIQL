@@ -23,19 +23,16 @@
 </head>
 <div>Selectors in SIQL</div>
 <textarea id='input'>
-DefaultInventory1       := (name is "B2525 Fixer") * 1 or (type is MISC) * 0;
-NewStuff                := except  DefaultInventory1;
+DefaultInventoryWeapons = name is "B2525 Fixer" & type is WEAPON * 1;
+DefaultInventoryMiscs   = type is MISC * all;
+DefaultInventory2       = [ DefaultInventoryWeapons , DefaultInventoryMiscs ];
+ 
 
-DefaultInventoryWeapons := name is "B2525 Fixer" and type is WEAPON * 1;
-DefaultInventoryMiscs   := type is MISC * 0;
-DefaultInventory2       := DefaultInventoryWeapons also DefaultInventoryMiscs;
+DefaultInventory3       = [ "B2525 Fixer" * 1 , type is MISC ];
+DefaultInventory4       = [ "B2525 Fixer" * 1 , MISC ];
 
-
-DefaultInventory3       := "B2525 Fixer" * 1 or type is MISC * 0;
-DefaultInventory4       := "B2525 Fixer" * 1 or MISC * 0;
-
-DefaultInventoryAll4    := "B2525 Fixer" * all or type is MISC * all;
-DefaultInventoryAll5    := "B2525 Fixer" or MISC;
+DefaultInventoryAll4    = [ "B2525 Fixer" * 1 , type is MISC * all ];
+DefaultInventoryAll5    = [ "B2525 Fixer"     , MISC * all ];
 </textarea>
 <center><button onclick="parse()">Parse and Generate</button></center>
 <div>Generated Mod Config</div>
