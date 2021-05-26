@@ -1,46 +1,117 @@
+<!DOCTYPE html>
 <html>
-<head>
-  <script src="jsDump.js"></script>
-  <script src="parser.js"></script>
-  <script>
-    function buildErrorMessage(e) {
-        return e.location !== undefined
-            ? "Line " + e.location.start.line + ", column " + e.location.start.column + ": " + e.message
-            : e.message;
-    }
-    function parse() {
-        try {
-            var output = PARSER.parse(document.getElementById('input').value);
-            document.getElementById('output').value = jsDump.parse(output);
-        } catch (e) {
-            document.getElementById('output').value = buildErrorMessage(e);
-        }
-    }
-  </script>
-  <style>
-    textarea { width: 100%; height: 40%}
-  </style>
-</head>
-<div>Selectors in SIQL</div>
-<textarea id='input'>
-DefaultInventory         = [ name is "B2525 Fixer" & type is WEAPON * 1
-                           , type is MISC x all ];
+
+  <head>
+    <meta charset="UTF-8">
+    <title>SIQL</title>
+  </head>
+  <body>
+    <link rel="stylesheet" href="tabulator.css">
+    <script type="text/javascript" src="tabulator.js"></script>
+    <script type="text/javascript" src="parser.js"></script>
+    <script type="text/javascript" src="jsDump.js"></script>
+    <script>
+    </script>
+    <center><h1>Standard Inventory Query Language</h1></center>
+    <p>Here is a simple query language that I (Vippenson) developed to express basic queries on a table of items with quantities.
+      It addresses almost all my personal needs to automate different processes and routines.
+      Once one selects/filters out items using queries, batch actions can be performed on all items in the resulting views.
+      Below, uou can find some simple <a href="#queries">queries</a>, an example FO76 <a href="#inventory">inventory</a>,
+      the resulting <a href="#view">view</a> and the generated <a href="#configs">configs</a> (in JSON format to be exported to external mods).
+      The page can be used offline and every section can be edited and played with; you can define your own example inventory, queries and generate the views and configs in the browser.
+      If you have suggestions/comments, you can find me at <a href="https://discordapp.com/users/vippenson#1486/">vippenson#1486 @ Discord</a>.
+    </p>
+    <h2 id="inventory">Example Inventory</h2>
+    <div>
+     <button id="add-row" onClick="inputTable.addRow({})">Add</button>
+     <button id="clear" onClick="inputTable.clearData()">Clear</button>
+    </div>
+    <div id="inputTable"></div>
+    <h2 id="queries">Example Queries</h2>
+    <textarea id="query" style="width: 100%" rows="10">
+DefaultInventory         = [ name is "B2525 Fixer" & kind is WEAPON * 1, kind is MISC x all ];
 NewStuff1                = [ exclude  DefaultInventory , everything ];
 
-DefaultInventoryWeapons  = [ name is "B2525 Fixer" & type is WEAPON * 1 ];
-DefaultInventoryMiscs    = [ type is MISC x all ];
+DefaultInventoryWeapons  = [ name is "B2525 Fixer" & kind is WEAPON * 1 ];
+DefaultInventoryMiscs    = [ kind is MISC x all ];
 DefaultInventory2        = [ DefaultInventoryWeapons , DefaultInventoryMiscs ];
 NewStuff2                = [ exclude  DefaultInventory2 , everything ];
 
-DefaultInventoryWeapons2 = [ "B2525 Fixer" & type is WEAPON x 1 ];
+DefaultInventoryWeapons2 = [ "B2525 Fixer" & kind is WEAPON x 1 ];
 DefaultInventoryWeapons3 = [ "B2525 Fixer" & WEAPON x 1 ];
 DefaultInventoryWeapons4 = [ "B2525 Fixer" & WEAPON ];
 DefaultInventoryWeapons5 = "B2525 Fixer" & WEAPON ;
 DefaultInventoryWeapons6 = "B2525 Fixer";
-DefaultInventory3        = [ "B2525 Fixer"
-                           , MISC x all ];
-</textarea>
-<center><button onclick="parse()">Parse and Generate</button></center>
-<div>Generated Mod Config</div>
-<textarea id='output'></textarea>
+DefaultInventory3        = [ "B2525 Fixer" , MISC x all ];
+    </textarea>
+    <h2 id="view">Example View</h2>
+    <div>
+      <label>Query Name: </label><input type="text" id="queryName" value="DefaultInventory"/>
+      <button onclick="runQuery()">Run Query</button>
+    </div>
+    <div id="outputTable"></div>
+
+    <h2 id="configs">Configs</h2>
+    <button onclick="parse()">Generate Config</button>
+    <textarea id="config" style="width: 100%" rows="10">some text</textarea>
+    <script src="./index.js"></script>
+    <script>
+      var inputTable = new Tabulator("#inputTable", {
+          data: [ {name: "B2525 Fixer",  kind:"WEAPON"    , quantity:2}
+                , {name: "Key1",         kind:"MISC"      , quantity:2}
+                , {name: "Key2",         kind:"MISC"      , quantity:1}
+                , {name: "Spoiled Meat", kind:"FOOD_WATER", quantity:11} ],
+          layout:"fitColumns",
+          addRowPos:"bottom",
+          resizableRows:true,
+          columns:
+            [ {title:"Name", field:"name", editor:"input"}
+            , {title:"Kind", field:"kind", editor:"select", editorParams:{values:["POWER_ARMOR", "WEAPON", "ARMOR", "APPAREL", "FOOD_WATER", "AID", "NOTES", "HOLO", "AMMO", "MISC", "MODS", "JUNK"]}}
+              , {title:"Quantity", field:"quantity", editor:"input", validator:["min:1", "max:1000000", "integer"]}
+              , {formatter:"buttonCross", width:40, align:"center", cellClick:function(e, cell){
+    cell.getRow().delete();
+}}
+            ]
+      });
+      var outputTable = new Tabulator("#outputTable", {
+          data: [],
+          layout:"fitColumns",
+          addRowPos:"bottom",
+          resizableRows:true,
+          columns:
+            [ {title:"Name", field:"name"}
+            , {title:"Kind", field:"kind"}
+            , {title:"Quantity", field:"quantity"}
+            ]
+      });
+
+      function buildErrorMessage(e) {
+         return e.location !== undefined
+             ? "Line " + e.location.start.line + ", column " + e.location.start.column + ": " + e.message
+             : e.message;
+      }
+
+      function parse() {
+         try {
+             var output = parser.parse(document.getElementById('query').value);
+             document.getElementById('config').value = jsDump.parse(output);
+         } catch (e) {
+            document.getElementById('config').value = buildErrorMessage(e);
+         }
+      }
+
+      function runQuery() {
+          var name      = document.getElementById("queryName").value
+          var inputData = inputTable.getData();
+          var checkedFlattenedConfig = parser.parse(document.getElementById('query').value);
+          var outputData = PS["Main"].evaluateCheckedConfig (checkedFlattenedConfig)(name)(inputData);
+          outputTable.setData(outputData);
+      }
+    </script>
+    <script>
+      runQuery();
+      parse();
+    </script>
+  </body>
+
 </html>
