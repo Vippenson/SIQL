@@ -11,6 +11,19 @@
     <script type="text/javascript" src="parser.js"></script>
     <script type="text/javascript" src="jsDump.js"></script>
     <script>
+      function toggle() {
+          var x = document.getElementById("Syntax");
+          var y = document.getElementById("SyntacticSugar");
+          if (x.style.display === "none") {
+              x.style.display = "block";
+              y.style.display = "block";
+              document.getElementById("show").innerHTML = "[hide syntax]";
+          } else {
+              x.style.display = "none";
+              y.style.display = "none";
+              document.getElementById("show").innerHTML = "[show syntax]";
+          }
+      }
     </script>
     <center><h1>Standard Inventory Query Language</h1></center>
     <p>Here is a simple query language that I (Vippenson) developed to express basic queries on a table of items with quantities.
@@ -27,12 +40,21 @@
      <button id="clear" onClick="inputTable.clearData()">Clear</button>
     </div>
     <div id="inputTable"></div>
+
     <h2 id="queries">Example Queries</h2>
+
+    <center>
+    <a id="show" onClick="toggle()">[show grammar]</a>
+    <img id="Syntax" src="Syntax.png" style="display: none"/>
+    <img id="SyntacticSugar" src="SyntacticSugar.png" style="display: none"/>
+    </center>
+
+    <br>
     <textarea id="query" style="width: 100%" rows="10">
-DefaultInventory         = [ name is "B2525 Fixer" & kind is WEAPON * 1, kind is MISC x all ];
+DefaultInventory         = [ name is "B2525 Fixer" & kind is WEAPON x 1, kind is MISC x all ];
 NewStuff1                = [ exclude  DefaultInventory , everything ];
 
-DefaultInventoryWeapons  = [ name is "B2525 Fixer" & kind is WEAPON * 1 ];
+DefaultInventoryWeapons  = [ name is "B2525 Fixer" & kind is WEAPON x 1 ];
 DefaultInventoryMiscs    = [ kind is MISC x all ];
 DefaultInventory2        = [ DefaultInventoryWeapons , DefaultInventoryMiscs ];
 NewStuff2                = [ exclude  DefaultInventory2 , everything ];
