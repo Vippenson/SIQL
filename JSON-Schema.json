@@ -1,0 +1,54 @@
+{ "$schema": "http://json-schema.org/draft-07/schema"
+, "type": "object"
+, "required": [ "nameError", "nameCheckedTree" ]
+, "properties":
+    { "nameError": { "type": "string" }
+    , "nameCheckedTree":
+        { "type": "array"
+        , "items":
+            { "type": "object"
+            , "required": [ "name", "selectors" ]
+            , "properties":
+                { "name": { "type": "string" }
+                , "selectors":
+                    { "type": "array"
+                    , "items":
+                        { "type": "object"
+                        , "required": [ "predicates", "quantity" ]
+                        , "properties":
+                            { "predicates":
+                                { "type": "array"
+                                , "items":
+                                    { "type": "object"
+                                    , "required": [ "field", "mode", "value" ]
+                                    , "properties":
+                                        { "field": { "type": "string" }
+                                        , "mode": { "type": "string"}
+                                        , "value": { "type": "string" }
+                                        }
+                                    }
+                                }
+                            , "quantity":
+                                 { "oneOf":
+                                     [ { "type": "object"
+                                       , "required": [ "exact" ]
+                                       , "properties": { "exact": { "type": "integer"}}
+                                       }
+                                     , { "type": "object"
+                                       , "required": [ "all" ]
+                                       , "properties": { "all": { "enum": [true]} }
+                                       }
+                                     , { "type": "object"
+                                       , "required": [ "nall" ]
+                                       , "properties": { "nall": { "enum": [true]} }
+                                       }
+                                     ]
+                                 }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
