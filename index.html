@@ -11,43 +11,55 @@
     <script type="text/javascript" src="parser.js"></script>
     <script type="text/javascript" src="jsDump.js"></script>
     <script>
-      function toggle() {
-          var x = document.getElementById("Syntax");
-          var y = document.getElementById("SyntacticSugar");
-          if (x.style.display === "none") {
-              x.style.display = "block";
-              y.style.display = "block";
-              document.getElementById("show").innerHTML = "[hide syntax]";
-          } else {
-              x.style.display = "none";
-              y.style.display = "none";
-              document.getElementById("show").innerHTML = "[show syntax]";
+      function openByName(name) {
+          var o = document.getElementById(name);
+          if (!(o.innerHTML.substring(0,3) === "[-]")) {
+              open(o);
           }
       }
-    </script>
+   </script>
+    <!-- ------------------------------------------------------------ -->
+
     <center><h1>Standard Inventory Query Language</h1></center>
     <p>Here is a simple query language that I (Vippenson) developed to express basic queries on a table of items with quantities.
       It addresses almost all my personal needs to automate different processes and routines.
       Once one selects/filters out items using queries, batch actions can be performed on all items in the resulting views.
-      Below, uou can find some simple <a href="#queries">queries</a>, an example FO76 <a href="#inventory">inventory</a>,
-      the resulting <a href="#view">view</a> and the generated <a href="#configs">configs</a> (in JSON format to be exported to external mods).
+      Below, you can find
+      <ul>
+        <li> some simple <a style="text-decoration: underline" onClick="openByName('queries')">queries</a>,</li>
+        <li> an example FO76 <a style="text-decoration: underline" onClick="openByName('inventory')">inventory</a>,</li>
+        <li> the resulting <a style="text-decoration: underline" onClick="openByName('view')">view</a>,</li>
+        <li> the generated <a style="text-decoration: underline" onClick="openByName('configs')">query configs</a>, and</li>
+        <li> a <a style="text-decoration: underline" onClick="openByName('configs')">tool</a> to generate configs that binds hotkeys to batch actions on the result of chosen queries.</li>
+      </ul>
       The page can be used offline and every section can be edited and played with; you can define your own example inventory, queries and generate the views and configs in the browser.
       If you have suggestions/comments, you can find me at <a href="https://discordapp.com/users/vippenson#1486/">vippenson#1486 @ Discord</a>.
     </p>
-    <h2 id="inventory">Example Inventory</h2>
-    <div>
-     <button id="add-row" onClick="inputTable.addRow({})">Add</button>
-     <button id="clear" onClick="inputTable.clearData()">Clear</button>
-    </div>
-    <div id="inputTable"></div>
 
-    <h2 id="queries">Example Queries</h2>
-    <a id="show" onClick="toggle()">[show grammar]</a>
-    <img id="Syntax" src="Syntax.png" style="height:300px;display: none"/>
-    <br>
-    <img id="SyntacticSugar" src="SyntacticSugar.png" style="height:200px;display: none"/>
-    <br>
-    <textarea id="query" style="width: 100%" rows="10">
+    <br> <!-- ------------------------------------------------------------ -->
+
+    <fieldset>
+      <legend id="inventory" style="font-weight:  bold;" onClick="collapse(this)">[-] Example Inventory</legend>
+      <div>
+        <div>
+          <button id="addRowInv" onClick="inputTable.addRow({})">Add</button>
+          <button id="clearInv" onClick="inputTable.clearData()">Clear</button>
+        </div>
+        <div id="inputTable"></div>
+      </div>
+    </fieldset>
+
+     <br> <!-- ------------------------------------------------------------ -->
+
+    <fieldset>
+      <legend id="queries" style="font-weight:  bold;" onClick="collapse(this)">[-] Example Queries</legend>
+      <div>
+        <a id="show" style="text-decoration: underline" onClick="toggle()">[show grammar]</a>
+        <img id="Syntax" src="Syntax.png" style="height:300px;display: none"/>
+        <br>
+        <img id="SyntacticSugar" src="SyntacticSugar.png" style="height:200px;display: none"/>
+        <br>
+        <textarea id="query" style="width: 100%" oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"' rows="10">
 DefaultInventory         = [ name is "B2525 Fixer" & kind is WEAPON x 1, kind is MISC x all ];
 NewStuff1                = [ exclude  DefaultInventory , everything ];
 
@@ -62,19 +74,58 @@ DefaultInventoryWeapons4 = [ "B2525 Fixer" & WEAPON ];
 DefaultInventoryWeapons5 = "B2525 Fixer" & WEAPON ;
 DefaultInventoryWeapons6 = "B2525 Fixer";
 DefaultInventory3        = [ "B2525 Fixer" , MISC x all ];
-    </textarea>
-    <h2 id="view">Example View</h2>
-    <div>
-      <label>Query Name: </label><input type="text" id="queryName" value="DefaultInventory"/>
-      <button onclick="runQuery()">Run Query</button>
-    </div>
-    <div id="outputTable"></div>
+        </textarea>
+      </div>
+    </fieldset>
 
-    <h2 id="configs">Configs</h2>
-    <button onclick="parse()">Generate Config</button>
-    <a href='https://vippenson.github.io/SIQL/JSON-Schema.json'>[JSON Schema]</a>
-    <textarea id="config" style="width: 100%" rows="10">some text</textarea>
-    <script src="./index.js"></script>
+    <br> <!-- ------------------------------------------------------------ -->
+
+    <fieldset>
+      <legend id="view" style="font-weight:  bold;" onClick="collapse(this)">[-] Example View</legend>
+      <div>
+        <div>
+          <label>Query Name: </label><select type="text" id="queryName" value="DefaultInventory"/></select>
+          <button onclick="runQuery()">Run Query</button>
+        </div>
+        <div id="outputTable"></div>
+      </div>
+    </fieldset>
+
+    <br> <!-- ------------------------------------------------------------ -->
+
+    <fieldset>
+      <legend id="configs" style="font-weight:  bold;" onClick="collapse(this)">[-] Query Configs</legend>
+      <div>
+        <button onclick="parse()">Generate Config</button>
+        <a style="text-decoration: underline" href='https://www.jsonschemavalidator.net/s/cRcD4uem'>[Validate JSON Here]</a>
+        <textarea id="config" style="width: 100%" rows="10">some text</textarea>
+      </div>
+    </fieldset>
+
+    <br> <!-- ------------------------------------------------------------ -->
+
+    <fieldset>
+      <legend id="actionConfigs" style="font-weight:  bold;" onClick="collapse(this)">[-] Action Configs</legend>
+      <div>
+        <div>
+          <button id="addRowAction" onClick="actionTable.addRow({})">Add</button>
+          <button id="clearAction" onClick="actionTable.clearData()">Clear</button>
+          <a style="text-decoration: underline" href="https://www.makeflashgames.com/resources/keycodes.php">[keycodes]</a>
+        </div>
+
+        <div id="actionTable"></div>
+
+        <br>
+
+        <button onclick="generateActionConfigs()">Generate Action Configs</button>
+        <textarea id="actionJSON" style="width: 100%" rows="10">some text</textarea>
+      </div>
+    </fieldset>
+
+
+    <!-- ----------------------------------------------------------------- -->
+
+    <script type="text/javascript" src="index.js"></script>
     <script>
       var inputTable = new Tabulator("#inputTable", {
           data: [ {name: "B2525 Fixer",  kind:"WEAPON"    , quantity:2}
@@ -87,7 +138,7 @@ DefaultInventory3        = [ "B2525 Fixer" , MISC x all ];
           columns:
             [ {title:"Name", field:"name", editor:"input"}
             , {title:"Kind", field:"kind", editor:"select", editorParams:{values:["POWER_ARMOR", "WEAPON", "ARMOR", "APPAREL", "FOOD_WATER", "AID", "NOTES", "HOLO", "AMMO", "MISC", "MODS", "JUNK"]}}
-              , {title:"Quantity", field:"quantity", editor:"input", validator:["min:1", "max:1000000", "integer"]}
+            , {title:"Quantity", field:"quantity", editor:"input", validator:["min:1", "max:1000000", "integer"]}
               , {formatter:"buttonCross", width:40, align:"center", cellClick:function(e, cell){
     cell.getRow().delete();
 }}
@@ -104,6 +155,34 @@ DefaultInventory3        = [ "B2525 Fixer" , MISC x all ];
             , {title:"Quantity", field:"quantity"}
             ]
       });
+
+      var actionTable = new Tabulator("#actionTable", {
+          data: [],
+          layout:"fitColumns",
+          addRowPos:"bottom",
+          resizableRows:true,
+          columns:
+          [ {title:"Hotkey", field:"hotkey", editor:"input",validator:["min:1", "max:1000", "integer"]}
+            , {title:"Action", field: "action", editor:"select", editorParams:{values:["transfer left", "transfer right", "drop", "consume"]}}
+            , {title:"Query", field: "query", editor:"select", editorParams:{values:[]}}
+            , {formatter:"buttonCross", width:40, align:"center", cellClick:function(e, cell){
+               cell.getRow().delete();
+              }}
+            ]
+      });
+      function toggle() {
+          var x = document.getElementById("Syntax");
+          var y = document.getElementById("SyntacticSugar");
+          if (x.style.display === "none") {
+              x.style.display = "block";
+              y.style.display = "block";
+              document.getElementById("show").innerHTML = "[hide syntax]";
+          } else {
+              x.style.display = "none";
+              y.style.display = "none";
+              document.getElementById("show").innerHTML = "[show syntax]";
+          }
+      }
 
       function buildErrorMessage(e) {
          return e.location !== undefined
@@ -127,10 +206,73 @@ DefaultInventory3        = [ "B2525 Fixer" , MISC x all ];
           var outputData = PS["Main"].evaluateCheckedConfig (checkedFlattenedConfig)(name)(inputData);
           outputTable.setData(outputData);
       }
+
+      function populateQueryNames () {
+          var configText = document.getElementById('config').value;
+          var config = JSON.parse(configText)
+          var names  = config.nameCheckedTree.map(d => d.name);
+          actionTable.columnManager.columnsByField.query.definition.editorParams.values = names;
+          var select = document.getElementById('queryName');
+          select.options.length = 0;
+          names.forEach(n => select.options[select.options.length] = new Option(n, n));
+      }
+
+      function lookup(name) {
+          var configText = document.getElementById('config').value;
+          var config = JSON.parse(configText);
+          var matchingDefs = config.nameCheckedTree.filter( d => d.name == name);
+          if (matchingDefs.length == 1) {
+              return matchingDefs[0].selectors;
+          } else {
+              return []
+          }
+      }
+
+      function generateActionConfigs() {
+          var hotkeyBindings = actionTable.getData();
+          var bindings = [];
+          hotkeyBindings.forEach(o => bindings.push(
+                                        { hotkey: o.hotkey
+                                        , action: o.action
+                                        , query: lookup(o.query)
+                                        }));
+          document.getElementById('actionJSON').value = jsDump.parse({bindings: bindings});
+      }
+
+
+      function open(o) {
+        o.innerHTML = "[-]" + o.innerHTML.substring(3,o.innerHTML.length);
+        o.nextElementSibling.style.display = "block";
+      }
+
+      function close(o) {
+          o.innerHTML
+                  = "[+]" + o.innerHTML.substring(3,o.innerHTML.length );
+          o.nextElementSibling.style.display = "none";
+      }
+
+
+      function collapse(o) {
+          if (o.innerHTML.substring(0,3) === "[-]") {
+              close(o);
+          } else {
+              open(o);
+          }
+      }
     </script>
     <script>
-      runQuery();
+      document.getElementById("query").style.height = document.getElementById("query").scrollHeight + "px"
       parse();
+      populateQueryNames();
+      document.getElementById("queryName").selected = "DefaultInventory";
+      runQuery();
+      collapse(document.getElementById("inventory"));
+      collapse(document.getElementById("queries"));
+      collapse(document.getElementById("view"));
+      collapse(document.getElementById("configs"));
+      collapse(document.getElementById("actionConfigs"));
+      actionTable.setData([{hotkey:49,action:"transfer right",query:"NewStuff1"}]);
+      generateActionConfigs();
     </script>
   </body>
 
