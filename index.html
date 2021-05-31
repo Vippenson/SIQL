@@ -96,7 +96,7 @@ DefaultInventory3        = [ "B2525 Fixer" , MISC x all ];
     <fieldset>
       <legend id="configs" style="font-weight:  bold;" onClick="collapse(this)">[-] Query Configs</legend>
       <div>
-        <button onclick="parse()">Generate Config</button>
+        <button onclick="parse();populateQueryNames()">Generate Config</button>
         <a style="text-decoration: underline" href='https://www.jsonschemavalidator.net/s/cRcD4uem'>[Validate JSON Here]</a>
         <textarea id="config" style="width: 100%" rows="10">some text</textarea>
       </div>
