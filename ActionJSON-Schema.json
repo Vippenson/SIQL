@@ -1,0 +1,53 @@
+{ "$schema": "http://json-schema.org/draft-07/schema"
+, "type": "object"
+, "required": [ "bindings" ]
+, "properties":
+    { "bindings" :
+       { "type": "array"
+       , "items":
+         { "type" : "object"
+         , "required": [ "hotkey" , "action", "query" ]
+         , "properties":
+             { "hotkey" : { "type": "integer"}
+             , "action" : { "enum": ["drop" , "consume", "transfer" ]}
+             , "query": { "type": "array"
+                        , "items":
+                            { "type": "object"
+                            , "required": [ "predicates", "quantity" ]
+                            , "properties":
+                                { "predicates":
+                                     { "type": "array"
+                                     , "items":
+                                         { "type": "object"
+                                         , "required": [ "field", "mode", "value" ]
+                                         , "properties":
+                                             { "field": { "type": "string" }
+                                             , "mode": { "type": "string"}
+                                             , "value": { "type": "string" }
+                                             }
+                                         }
+                                     }
+                                , "quantity":
+                                    { "oneOf":
+                                        [ { "type": "object"
+                                          , "required": [ "exact" ]
+                                          , "properties": { "exact": { "type": "integer"}}
+                                          }
+                                        , { "type": "object"
+                                          , "required": [ "all" ]
+                                          , "properties": { "all": { "enum": [true]} }
+                                          }
+                                        , { "type": "object"
+                                          , "required": [ "nall" ]
+                                          , "properties": { "nall": { "enum": [true]} }
+                                          }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+             }
+         }
+       }
+    }
+}

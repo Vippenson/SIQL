@@ -111,6 +111,7 @@ DefaultInventory3        = [ "B2525 Fixer" , MISC x all ];
           <button id="addRowAction" onClick="actionTable.addRow({})">Add</button>
           <button id="clearAction" onClick="actionTable.clearData()">Clear</button>
           <a style="text-decoration: underline" href="https://www.makeflashgames.com/resources/keycodes.php">[keycodes]</a>
+          <a style="text-decoration: underline" href="https://www.jsonschemavalidator.net/s/LjhEceNX">[validate bindings JSON here]</a>
         </div>
 
         <div id="actionTable"></div>
@@ -163,7 +164,7 @@ DefaultInventory3        = [ "B2525 Fixer" , MISC x all ];
           resizableRows:true,
           columns:
           [ {title:"Hotkey", field:"hotkey", editor:"input",validator:["min:1", "max:1000", "integer"]}
-            , {title:"Action", field: "action", editor:"select", editorParams:{values:["transfer left", "transfer right", "drop", "consume"]}}
+            , {title:"Action", field: "action", editor:"select", editorParams:{values:["transfer", "drop", "consume"]}}
             , {title:"Query", field: "query", editor:"select", editorParams:{values:[]}}
             , {formatter:"buttonCross", width:40, align:"center", cellClick:function(e, cell){
                cell.getRow().delete();
@@ -271,7 +272,7 @@ DefaultInventory3        = [ "B2525 Fixer" , MISC x all ];
       collapse(document.getElementById("view"));
       collapse(document.getElementById("configs"));
       collapse(document.getElementById("actionConfigs"));
-      actionTable.setData([{hotkey:49,action:"transfer right",query:"NewStuff1"}]);
+      actionTable.setData([{hotkey:49,action:"transfer",query:"NewStuff1"}]);
       generateActionConfigs();
     </script>
   </body>
