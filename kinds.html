@@ -1,0 +1,36 @@
+<html>
+  <head>
+    <style>
+      table {
+          border-collapse: collapse;
+      }
+      th, td {
+          border: 1px solid;
+          padding: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Supported Kinds</h1>
+    <p>In the game, item kinds are coded with a number stored in 'filterFlag' field of items.</p>
+    <table>
+      <tr>
+        <th>kind</th>
+        <th>'filterFlag' regular expression patterns</th>
+      </tr>
+<tr><td><strong>POWER_ARMOR</strong></td><td>"(0)"</td></tr>
+<tr><td><strong>WEAPON</strong></td><td>"(2|3|4|5)"</td></tr>
+<tr><td><strong>ARMOR</strong></td><td>"(8)"</td></tr>
+<tr><td><strong>APPAREL</strong></td><td>"(16)"</td></tr>
+<tr><td><strong>FOOD_WATER</strong></td><td>"(32|33|9)"</td></tr>
+<tr><td><strong>AID</strong></td><td>"(64|65)"</td></tr>
+<tr><td><strong>NOTES</strong></td><td>"(1024|128)"</td></tr>
+<tr><td><strong>HOLO</strong></td><td>"(65536)"</td></tr>
+<tr><td><strong>AMMO</strong></td><td>"(32768)"</td></tr>
+<tr><td><strong>MISC</strong></td><td>"(4096|266240|512|33280)"</td></tr>
+<tr><td><strong>MODS</strong></td><td>"(16384|2048)"</td></tr>
+<tr><td><strong>JUNK</strong></td><td>"(8192|270336|33792)"</td></tr>
+    </table>
+   <p><strong>Note:</strong> currently, kinds are implemented in SIQL using regular expressions (the "of" mode). If users face performance issues, I can build support for kinds into the mod.</p>
+   </body>
+</html>

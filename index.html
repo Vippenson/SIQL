@@ -10,6 +10,7 @@
     <script type="text/javascript" src="tabulator.js"></script>
     <script type="text/javascript" src="parser.js"></script>
     <script type="text/javascript" src="jsDump.js"></script>
+    <script type="text/javascript" src="jquery-3.6.0.min.js"></script>
     <script>
       function openByName(name) {
           var o = document.getElementById(name);
@@ -17,6 +18,26 @@
               open(o);
           }
       }
+      var exampleModel =
+          { query:  'DefaultInventory         = [ text is "B2525 Fixer" & kind is WEAPON x 1, kind is MISC x all ];'
+            +'\n'+  'NewStuff1                = [ exclude  DefaultInventory , everything ];'
+            +'\n'+  'DefaultInventoryWeapons  = [ text is "B2525 Fixer" & kind is WEAPON x 1 ];'
+            +'\n'+  'DefaultInventoryMiscs    = [ kind is MISC x all ];'
+            +'\n'+  'DefaultInventory2        = [ DefaultInventoryWeapons , DefaultInventoryMiscs ];'
+            +'\n'+  'NewStuff2                = [ exclude  DefaultInventory2 , everything ];'
+            +'\n'+  'DefaultInventoryWeapons2 = [ "B2525 Fixer" & kind is WEAPON x 1 ];'
+            +'\n'+  'DefaultInventoryWeapons3 = [ "B2525 Fixer" & WEAPON x 1 ];'
+            +'\n'+  'DefaultInventoryWeapons4 = [ "B2525 Fixer" & WEAPON ];'
+            +'\n'+  'DefaultInventoryWeapons5 = "B2525 Fixer" & WEAPON ;'
+            +'\n'+  'DefaultInventoryWeapons6 = "B2525 Fixer";'
+            +'\n'+  'DefaultInventory3        = [ "B2525 Fixer" , MISC x all ];'
+          , inv: [ {text: "B2525 Fixer",  kind:"WEAPON"    , quantity:2}
+                 , {text: "Key1",         kind:"MISC"      , quantity:2}
+                 , {text: "Key2",         kind:"MISC"      , quantity:1}
+                   , {text: "Spoiled Meat", kind:"FOOD_WATER", quantity:11} ]
+          , selectedQueryIndex: 1
+          , actionBindings: [{hotkey:49,action:"transfer",query:"NewStuff1"}]
+          };
    </script>
     <!-- ------------------------------------------------------------ -->
 
@@ -38,9 +59,42 @@
 
     <br> <!-- ------------------------------------------------------------ -->
 
+    <div>
+    <label>Load from GitHub Gist: </label>
+    <input id="queryGist" type="text"></input>
+    <label>Gist Filename: </label>
+    <input id="queryGistFile" type="text"></input>
+    <button type="button" onClick="loadQueryGist()">load</button>
+    </div>
+
+    <br> <!-- ------------------------------------------------------------ -->
+
     <fieldset>
-      <legend id="inventory" style="font-weight:  bold;" onClick="collapse(this)">[-] Example Inventory</legend>
-      <div>
+      <legend id="queries" style="font-weight: bold" onClick="collapse(this)">[+] SIQL Queries</legend>
+      <div style="display:none">
+        <a id="show" style="text-decoration: underline; display:block;" onClick="collapse(this)">[+] SIQL syntax</a>
+        <div id="grammar" style="display: none">
+        <img id="Syntax" src="Syntax.png" style="height:300px"/>
+        <br>
+        <img id="SyntacticSugar" src="SyntacticSugar.png" style="height:200px"/>
+        <br>
+        <a href="fields.html">[Supported Item Fields]</a>
+        <br>
+        <a href="modes.html">[Supported Comparison Modes]</a>
+        <br>
+        <a href="kinds.html">[Kinds and Their Patterns]</a>
+        </div>
+        <br>
+        <br>
+        <textarea id="query" style="width: 100%" oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"' rows="10"></textarea>
+        </div>
+    </fieldset>
+
+    <br> <!-- ------------------------------------------------------------ -->
+
+    <fieldset>
+      <legend id="inventory" style="font-weight: bold" onClick="collapse(this)">[+] Example Inventory</legend>
+      <div style="display:none">
         <div>
           <button id="addRowInv" onClick="inputTable.addRow({})">Add</button>
           <button id="clearInv" onClick="inputTable.clearData()">Clear</button>
@@ -52,37 +106,8 @@
      <br> <!-- ------------------------------------------------------------ -->
 
     <fieldset>
-      <legend id="queries" style="font-weight:  bold;" onClick="collapse(this)">[-] Example Queries</legend>
-      <div>
-        <a id="show" style="text-decoration: underline" onClick="toggle()">[show grammar]</a>
-        <img id="Syntax" src="Syntax.png" style="height:300px;display: none"/>
-        <br>
-        <img id="SyntacticSugar" src="SyntacticSugar.png" style="height:200px;display: none"/>
-        <br>
-        <textarea id="query" style="width: 100%" oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"' rows="10">
-DefaultInventory         = [ name is "B2525 Fixer" & kind is WEAPON x 1, kind is MISC x all ];
-NewStuff1                = [ exclude  DefaultInventory , everything ];
-
-DefaultInventoryWeapons  = [ name is "B2525 Fixer" & kind is WEAPON x 1 ];
-DefaultInventoryMiscs    = [ kind is MISC x all ];
-DefaultInventory2        = [ DefaultInventoryWeapons , DefaultInventoryMiscs ];
-NewStuff2                = [ exclude  DefaultInventory2 , everything ];
-
-DefaultInventoryWeapons2 = [ "B2525 Fixer" & kind is WEAPON x 1 ];
-DefaultInventoryWeapons3 = [ "B2525 Fixer" & WEAPON x 1 ];
-DefaultInventoryWeapons4 = [ "B2525 Fixer" & WEAPON ];
-DefaultInventoryWeapons5 = "B2525 Fixer" & WEAPON ;
-DefaultInventoryWeapons6 = "B2525 Fixer";
-DefaultInventory3        = [ "B2525 Fixer" , MISC x all ];
-        </textarea>
-      </div>
-    </fieldset>
-
-    <br> <!-- ------------------------------------------------------------ -->
-
-    <fieldset>
-      <legend id="view" style="font-weight:  bold;" onClick="collapse(this)">[-] Example View</legend>
-      <div>
+      <legend id="view" style="font-weight: bold" onClick="collapse(this)">[+] Example View</legend>
+      <div style="display:none">
         <div>
           <label>Query Name: </label><select type="text" id="queryName" value="DefaultInventory"/></select>
           <button onclick="runQuery()">Run Query</button>
@@ -94,55 +119,69 @@ DefaultInventory3        = [ "B2525 Fixer" , MISC x all ];
     <br> <!-- ------------------------------------------------------------ -->
 
     <fieldset>
-      <legend id="configs" style="font-weight:  bold;" onClick="collapse(this)">[-] Query Configs</legend>
-      <div>
+      <legend id="configs" style="font-weight: bold" onClick="collapse(this)">[+] Query Configs</legend>
+      <div style="display:none">
         <button onclick="parse();populateQueryNames()">Generate Config</button>
         <a style="text-decoration: underline" href='https://www.jsonschemavalidator.net/s/cRcD4uem'>[Validate JSON Here]</a>
-        <textarea id="config" style="width: 100%" rows="10">some text</textarea>
+        <textarea id="config" style="width: 100%" rows="10" readonly></textarea>
       </div>
     </fieldset>
 
     <br> <!-- ------------------------------------------------------------ -->
 
     <fieldset>
-      <legend id="actionConfigs" style="font-weight:  bold;" onClick="collapse(this)">[-] Action Configs</legend>
-      <div>
+      <legend id="actionConfigs" style="font-weight: bold" onClick="collapse(this)">[+] Action Configs</legend>
+      <div style="display:none">
         <div>
           <button id="addRowAction" onClick="actionTable.addRow({})">Add</button>
           <button id="clearAction" onClick="actionTable.clearData()">Clear</button>
           <a style="text-decoration: underline" href="https://www.makeflashgames.com/resources/keycodes.php">[keycodes]</a>
           <a style="text-decoration: underline" href="https://www.jsonschemavalidator.net/s/LjhEceNX">[validate bindings JSON here]</a>
         </div>
-
         <div id="actionTable"></div>
-
         <br>
-
         <button onclick="generateActionConfigs()">Generate Action Configs</button>
-        <textarea id="actionJSON" style="width: 100%" rows="10">some text</textarea>
+        <textarea id="actionJSON" style="width: 100%" rows="10" readonly></textarea>
       </div>
     </fieldset>
 
+    <br> <!-- ------------------------------------------------------------ -->
+
+   <fieldset>
+     <legend id="pageData" style="font-weight: bold" onClick="collapse(this)">[+] Saving Page Data</legend>
+     <div style="display:none">
+       <button onclick="getState()">save page data</button>
+       <br>
+       <label>Page Data JSON (for Gist):</label>
+       <textarea id="state" style="width: 100%" rows="10" readonly></textarea>
+     </div>
+   </fieldset>
 
     <!-- ----------------------------------------------------------------- -->
 
     <script type="text/javascript" src="index.js"></script>
     <script>
+      function getState() {
+          var currentModel =
+              { query             : document.getElementById("query").value.replace(/(\r\n|\n|\r)/gm,"\\n")
+              , inv               : inputTable.getData()
+              , selectedQueryIndex: document.getElementById("queryName").selectedIndex
+              , actionBindings    : actionTable.getData()
+              };
+          document.getElementById("state").value = jsDump.parse(currentModel);
+      }
       var inputTable = new Tabulator("#inputTable", {
-          data: [ {name: "B2525 Fixer",  kind:"WEAPON"    , quantity:2}
-                , {name: "Key1",         kind:"MISC"      , quantity:2}
-                , {name: "Key2",         kind:"MISC"      , quantity:1}
-                , {name: "Spoiled Meat", kind:"FOOD_WATER", quantity:11} ],
+          data: [],
           layout:"fitColumns",
           addRowPos:"bottom",
           resizableRows:true,
           columns:
-            [ {title:"Name", field:"name", editor:"input"}
+            [ {title:"Text", field:"text", editor:"input"}
             , {title:"Kind", field:"kind", editor:"select", editorParams:{values:["POWER_ARMOR", "WEAPON", "ARMOR", "APPAREL", "FOOD_WATER", "AID", "NOTES", "HOLO", "AMMO", "MISC", "MODS", "JUNK"]}}
             , {title:"Quantity", field:"quantity", editor:"input", validator:["min:1", "max:1000000", "integer"]}
               , {formatter:"buttonCross", width:40, align:"center", cellClick:function(e, cell){
-    cell.getRow().delete();
-}}
+                  cell.getRow().delete();
+                }}
             ]
       });
       var outputTable = new Tabulator("#outputTable", {
@@ -151,7 +190,7 @@ DefaultInventory3        = [ "B2525 Fixer" , MISC x all ];
           addRowPos:"bottom",
           resizableRows:true,
           columns:
-            [ {title:"Name", field:"name"}
+            [ {title:"Text", field:"text"}
             , {title:"Kind", field:"kind"}
             , {title:"Quantity", field:"quantity"}
             ]
@@ -171,18 +210,17 @@ DefaultInventory3        = [ "B2525 Fixer" , MISC x all ];
               }}
             ]
       });
-      function toggle() {
-          var x = document.getElementById("Syntax");
-          var y = document.getElementById("SyntacticSugar");
-          if (x.style.display === "none") {
-              x.style.display = "block";
-              y.style.display = "block";
-              document.getElementById("show").innerHTML = "[hide syntax]";
-          } else {
-              x.style.display = "none";
-              y.style.display = "none";
-              document.getElementById("show").innerHTML = "[show syntax]";
-          }
+
+      function loadQueryGist() {
+          jQuery.get('https://api.github.com/gists/'+document.getElementById("queryGist").value, function(data) {
+              try{
+                  var model = JSON.parse(data.files[document.getElementById("queryGistFile").value].content);
+                  initialise(model);
+              } catch (error)
+              {
+                   initialise(exampleModel);
+              }
+           });
       }
 
       function buildErrorMessage(e) {
@@ -191,29 +229,52 @@ DefaultInventory3        = [ "B2525 Fixer" , MISC x all ];
              : e.message;
       }
 
+      function tryGist() {
+          var param = window.location.search;
+          if (param.length > 1)
+          {
+              try {
+              var tailParam = param.slice(1)
+              var params    = tailParam.split('&');
+              var gist     = params[0];
+              var gistFile = params[1];
+              document.getElementById("queryGist").value = gist;
+              document.getElementById("queryGistFile").value = gistFile;
+              loadQueryGist();
+              }
+              catch (error) {
+                  initialise(exampleModel);
+              }
+          }
+          else {
+              initialise(exampleModel);
+          }
+      }
+
       function parse() {
          try {
              var output = parser.parse(document.getElementById('query').value);
              document.getElementById('config').value = jsDump.parse(output);
          } catch (e) {
-            document.getElementById('config').value = buildErrorMessage(e);
+             document.getElementById('config').value = buildErrorMessage(e);
          }
       }
 
       function runQuery() {
-          var name      = document.getElementById("queryName").value
-          var inputData = inputTable.getData();
-          var checkedFlattenedConfig = parser.parse(document.getElementById('query').value);
-          var outputData = PS["Main"].evaluateCheckedConfig (checkedFlattenedConfig)(name)(inputData);
+          var name                   = document.getElementById("queryName").value
+          var inputData              = inputTable.getData();
+          var configText             = document.getElementById('config').value;
+          var config                 = JSON.parse(configText);
+          var outputData             = PS["Main"].evaluateCheckedConfig (config)(name)(inputData);
           outputTable.setData(outputData);
       }
 
       function populateQueryNames () {
           var configText = document.getElementById('config').value;
-          var config = JSON.parse(configText)
-          var names  = config.nameCheckedTree.map(d => d.name);
+          var config     = JSON.parse(configText)
+          var names      = config.nameCheckedTree.map(d => d.name);
           actionTable.columnManager.columnsByField.query.definition.editorParams.values = names;
-          var select = document.getElementById('queryName');
+          var select     = document.getElementById('queryName');
           select.options.length = 0;
           names.forEach(n => select.options[select.options.length] = new Option(n, n));
       }
@@ -260,20 +321,30 @@ DefaultInventory3        = [ "B2525 Fixer" , MISC x all ];
               open(o);
           }
       }
+
+      function collapseAll() {
+          collapse(document.getElementById("queries"));
+          collapse(document.getElementById("inventory"));
+          collapse(document.getElementById("view"));
+          collapse(document.getElementById("configs"));
+          collapse(document.getElementById("actionConfigs"));
+      }
+
+      function initialise (model) {
+          document.getElementById('query').value        = model.query;
+          openByName('queries');
+          document.getElementById("query").style.height = document.getElementById("query").scrollHeight + "px";
+          inputTable.setData(model.inv);
+          parse();
+          populateQueryNames();
+          document.getElementById("queryName").selectedIndex = model.selectedQueryIndex;
+          runQuery();
+          actionTable.setData(model.actionBindings);
+          generateActionConfigs();
+      }
     </script>
     <script>
-      document.getElementById("query").style.height = document.getElementById("query").scrollHeight + "px"
-      parse();
-      populateQueryNames();
-      document.getElementById("queryName").selected = "DefaultInventory";
-      runQuery();
-      collapse(document.getElementById("inventory"));
-      collapse(document.getElementById("queries"));
-      collapse(document.getElementById("view"));
-      collapse(document.getElementById("configs"));
-      collapse(document.getElementById("actionConfigs"));
-      actionTable.setData([{hotkey:49,action:"transfer",query:"NewStuff1"}]);
-      generateActionConfigs();
+      tryGist();
     </script>
   </body>
 

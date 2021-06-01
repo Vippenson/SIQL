@@ -1,0 +1,50 @@
+<html>
+  <head>
+    <style>
+      table {
+          border-collapse: collapse;
+      }
+      th, td {
+          border: 1px solid;
+          padding: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Supported Item Fields</h1>
+    <table>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+      </tr>
+      <tr><td>String</td><td>text</td></tr>
+      <tr><td>Integer Number</td><td>count</td></tr>
+      <tr><td>Integer Number</td><td>itemValue</td></tr>
+      <tr><td>Integer Number</td><td>filterFlag</td></tr>
+      <tr><td>Integer Number</td><td>currentHealth</td></tr>
+      <tr><td>Integer Number</td><td>damage</td></tr>
+      <tr><td>Integer Number</td><td>durability</td></tr>
+      <tr><td>Integer Number</td><td>maximumHealth</td></tr>
+      <tr><td>Real Number</td><td>weight</td></tr>
+      <tr><td>Real Number</td><td>weaponDisplayAccuracy</td></tr>
+      <tr><td>Real Number</td><td>weaponDisplayRateOfFire</td></tr>
+      <tr><td>Real Number</td><td>weaponDisplayRange</td></tr>
+      <tr><td>Integer Number</td><td>numLegendaryStars</td></tr>
+      <tr><td>Integer Number</td><td>itemLevel</td></tr>
+      <tr><td>Integer Number</td><td>rarity</td></tr>
+      <tr><td>true/false</td><td>isTradable</td></tr>
+      <tr><td>true/false</td><td>isSpoiled</td></tr>
+      <tr><td>true/false</td><td>isSetItem</td></tr>
+      <tr><td>true/false</td><td>isSetBonusActive</td></tr>
+      <tr><td>true/false</td><td>isQuestItem</td></tr>
+      <tr><td>true/false</td><td>isLegendary</td></tr>
+      <tr><td>true/false</td><td>isLearnedRecipe</td></tr>
+      <tr><td>true/false</td><td>isCurrency</td></tr>
+      <tr><td>true/false</td><td>isWeightless</td></tr>
+      <tr><td>true/false</td><td>isAutoScrappable</td></tr>
+      <tr><td>true/false</td><td>canGoIntoScrapStash</td></tr>
+      <tr><td>true/false</td><td>scrapAllowed</td></tr>
+    </table>
+   <p><strong>Note:</strong> above is raw, partly-tested, and incomplete data  extracted from the game files (by <a href="https://github.com/sdaskaliesku">Serhii</a>). The syntactic sugar <strong>kind</strong> deals with 'filterFlag'. I will, possibly, add support for more fields including for the legendary effects of the gears.</p>
+   </body>
+</html>
