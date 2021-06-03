@@ -264,9 +264,10 @@
       function runQuery() {
           var name                   = document.getElementById("queryName").value
           var inputData              = inputTable.getData();
+          var inputDataFixed         = inputData.map(item => ({text: item.text, kind: item.kind, quantity: parseInt(item.quantity)}));
           var configText             = document.getElementById('config').value;
           var config                 = JSON.parse(configText);
-          var outputData             = PS["Main"].evaluateCheckedConfig (config)(name)(inputData);
+          var outputData             = PS["Main"].evaluateCheckedConfig (config)(name)(inputDataFixed);
           outputTable.setData(outputData);
       }
 
