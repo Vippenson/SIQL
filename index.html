@@ -86,7 +86,7 @@
         </div>
         <br>
         <br>
-        <textarea id="query" style="width: 100%" oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"' rows="10"></textarea>
+        <textarea id="query" style="width: 100%" rows="30"></textarea>
         </div>
     </fieldset>
 
@@ -140,6 +140,7 @@
         </div>
         <div id="actionTable"></div>
         <br>
+        <input type="checkbox" id="forStash" name="Embed in IOM-Stash Config" checked>
         <button onclick="generateActionConfigs()">Generate Action Configs</button>
         <textarea id="actionJSON" style="width: 100%" rows="10" readonly></textarea>
       </div>
@@ -271,7 +272,7 @@
 
       function populateQueryNames () {
           var configText = document.getElementById('config').value;
-          var config     = JSON.parse(configText)
+          var config     = JSON.parse(configText);
           var names      = config.nameCheckedTree.map(d => d.name);
           actionTable.columnManager.columnsByField.query.definition.editorParams.values = names;
           var select     = document.getElementById('queryName');
@@ -284,7 +285,7 @@
           var config = JSON.parse(configText);
           var matchingDefs = config.nameCheckedTree.filter( d => d.name == name);
           if (matchingDefs.length == 1) {
-              return matchingDefs[0].selectors;
+              return matchingDefs[0].querys;
           } else {
               return []
           }
@@ -298,7 +299,21 @@
                                         , action: o.action
                                         , query: lookup(o.query)
                                         }));
-          document.getElementById('actionJSON').value = jsDump.parse({bindings: bindings});
+          if (document.getElementById("forStash").checked)
+          {
+              document.getElementById('actionJSON').value =
+                  jsDump.parse(
+                      { bindings: bindings
+                      , debug: false
+                      , additionalItemDataForAll: false
+                      , verboseOutput: false
+                      , apiMethods:[]
+                      }
+                  );
+          } else {
+              document.getElementById('actionJSON').value = jsDump.parse({bindings: bindings});
+          }
+
       }
 
 
@@ -333,7 +348,7 @@
       function initialise (model) {
           document.getElementById('query').value        = model.query;
           openByName('queries');
-          document.getElementById("query").style.height = document.getElementById("query").scrollHeight + "px";
+          //document.getElementById("query").style.height = document.getElementById("query").scrollHeight + "px";
           inputTable.setData(model.inv);
           parse();
           populateQueryNames();
