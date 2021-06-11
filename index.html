@@ -6,26 +6,32 @@
     <title>SIQL</title>
   </head>
   <body>
-    <link rel="stylesheet" href="tabulator.css">
+    <link rel="stylesheet" href="tabulator_midnight.css">
     <script type="text/javascript" src="tabulator.js"></script>
     <script type="text/javascript" src="parser.js"></script>
     <script type="text/javascript" src="jsDump.js"></script>
     <script type="text/javascript" src="jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="codemirror.js"></script>
+    <link rel="stylesheet" href="codemirror.css">
+    <script type="text/javascript" src="simple.js"></script>
+    <script type="text/javascript" src="searchcursor.js"></script>
+    <script type="text/javascript" src="mark-selection.js"></script>
+    <style>
+      body,textarea { background-color:  black}
+      h1, p, textarea, label, input, ul, ui, legend, fieldset  { color: white;}
+      button { color: black;}
+      a:visited,a:link {color: #87CEFA;}
+    </style>
+
     <script>
-      function openByName(name) {
-          var o = document.getElementById(name);
-          if (!(o.innerHTML.substring(0,3) === "[-]")) {
-              open(o);
-          }
-      }
       var exampleModel =
-          { query:  'DefaultInventory         = [ text is "B2525 Fixer" & kind is WEAPON x 1, kind is MISC x all ];'
+          { query:  'DefaultInventory         = [ text is "B2525 Fixer" & kind is "WEAPON" x 1, kind is "MISC" x all ];'
             +'\n'+  'NewStuff1                = [ exclude  DefaultInventory , everything ];'
-            +'\n'+  'DefaultInventoryWeapons  = [ text is "B2525 Fixer" & kind is WEAPON x 1 ];'
-            +'\n'+  'DefaultInventoryMiscs    = [ kind is MISC x all ];'
+            +'\n'+  'DefaultInventoryWeapons  = [ text is "B2525 Fixer" & kind is "WEAPON" x 1 ];'
+            +'\n'+  'DefaultInventoryMiscs    = [ kind is "MISC" x all ];'
             +'\n'+  'DefaultInventory2        = [ DefaultInventoryWeapons , DefaultInventoryMiscs ];'
             +'\n'+  'NewStuff2                = [ exclude  DefaultInventory2 , everything ];'
-            +'\n'+  'DefaultInventoryWeapons2 = [ "B2525 Fixer" & kind is WEAPON x 1 ];'
+            +'\n'+  'DefaultInventoryWeapons2 = [ "B2525 Fixer" & kind is "WEAPON" x 1 ];'
             +'\n'+  'DefaultInventoryWeapons3 = [ "B2525 Fixer" & WEAPON x 1 ];'
             +'\n'+  'DefaultInventoryWeapons4 = [ "B2525 Fixer" & WEAPON ];'
             +'\n'+  'DefaultInventoryWeapons5 = "B2525 Fixer" & WEAPON ;'
@@ -46,26 +52,18 @@
       It addresses almost all my personal needs to automate different processes and routines.
       Once one selects/filters out items using queries, batch actions can be performed on all items in the resulting views.
       Below, you can find
-      <ul>
-        <li> some simple <a style="text-decoration: underline" onClick="openByName('queries')">queries</a>,</li>
-        <li> an example FO76 <a style="text-decoration: underline" onClick="openByName('inventory')">inventory</a>,</li>
-        <li> the resulting <a style="text-decoration: underline" onClick="openByName('view')">view</a>,</li>
-        <li> the generated <a style="text-decoration: underline" onClick="openByName('configs')">query configs</a>, and</li>
-        <li> a <a style="text-decoration: underline" onClick="openByName('configs')">tool</a> to generate configs that binds hotkeys to batch actions on the result of chosen queries.</li>
-      </ul>
+    </p>
+    <ul>
+        <li><a style="text-decoration: underline" onClick="openByName('queries')">an advanced editor</a> to write and compile SIQL queries;</li>
+        <li><a style="text-decoration: underline" onClick="openByName('inventory')">a table</a> to enter an example inventory;</li>
+        <li><a style="text-decoration: underline" onClick="openByName('view')">an interpreter</a> to run and test queries on the example table;</li>
+        <li><a style="text-decoration: underline" onClick="openByName('actionConfigs')">a tool</a> to generate configs that binds hotkeys to batch actions on the result of chosen queries; and</li>
+        <li><a style="text-decoration: underline" onClick="openByName('loadingPageData')">a section</a> to save/load the current state of this page including queries, example inventory, and binding configs.</li>
+    </ul>
+    <p>
       The page can be used offline and every section can be edited and played with; you can define your own example inventory, queries and generate the views and configs in the browser.
       If you have suggestions/comments, you can find me at <a href="https://discordapp.com/users/vippenson#1486/">vippenson#1486 @ Discord</a>.
     </p>
-
-    <br> <!-- ------------------------------------------------------------ -->
-
-    <div>
-    <label>Load from GitHub Gist: </label>
-    <input id="queryGist" type="text"></input>
-    <label>Gist Filename: </label>
-    <input id="queryGistFile" type="text"></input>
-    <button type="button" onClick="loadQueryGist()">load</button>
-    </div>
 
     <br> <!-- ------------------------------------------------------------ -->
 
@@ -86,8 +84,16 @@
         </div>
         <br>
         <br>
-        <textarea id="query" style="width: 100%" rows="30"></textarea>
+        <div id="query" style="width: 100%" rows="30"></div>
+        <center><button onclick="parse()">Compile (Alt+Enter)</button></center>
+        <br>
+        <div id="compileResult"></div>
+        <p id="configs" style="font-weight: bold" onClick="collapse(this)">[+] Compiled Query</p>
+        <div style="display:none">
+          <textarea id="config" style="width: 100%" rows="10" readonly></textarea>
+          <a style="text-decoration: underline" href='https://www.jsonschemavalidator.net/s/cRcD4uem'>[JSON Schema Here]</a>
         </div>
+     </div>
     </fieldset>
 
     <br> <!-- ------------------------------------------------------------ -->
@@ -110,20 +116,9 @@
       <div style="display:none">
         <div>
           <label>Query Name: </label><select type="text" id="queryName" value="DefaultInventory"/></select>
-          <button onclick="runQuery()">Run Query</button>
+          <button id="runQuery" onclick="runQuery()">Run Query</button>
         </div>
         <div id="outputTable"></div>
-      </div>
-    </fieldset>
-
-    <br> <!-- ------------------------------------------------------------ -->
-
-    <fieldset>
-      <legend id="configs" style="font-weight: bold" onClick="collapse(this)">[+] Query Configs</legend>
-      <div style="display:none">
-        <button onclick="parse();populateQueryNames()">Generate Config</button>
-        <a style="text-decoration: underline" href='https://www.jsonschemavalidator.net/s/cRcD4uem'>[Validate JSON Here]</a>
-        <textarea id="config" style="width: 100%" rows="10" readonly></textarea>
       </div>
     </fieldset>
 
@@ -140,21 +135,35 @@
         </div>
         <div id="actionTable"></div>
         <br>
-        <input type="checkbox" id="forStash" name="Embed in IOM-Stash Config" checked>
-        <button onclick="generateActionConfigs()">Generate Action Configs</button>
+        <input type="checkbox" id="forStash" checked>Embed in IOM-Stash Config</input>
+        <br>
+        <button id="generateActionConfigs" onclick="generateActionConfigs()">Generate Action Configs</button>
         <textarea id="actionJSON" style="width: 100%" rows="10" readonly></textarea>
       </div>
     </fieldset>
 
     <br> <!-- ------------------------------------------------------------ -->
 
-   <fieldset>
-     <legend id="pageData" style="font-weight: bold" onClick="collapse(this)">[+] Saving Page Data</legend>
+    <fieldset>
+     <legend id="loadingPageData" style="font-weight: bold" onClick="collapse(this)">[+] Loading/Saving Page Data</legend>
      <div style="display:none">
-       <button onclick="getState()">save page data</button>
+
+       <div>
+         <button onclick="getState()">get current page state</button>
+         <br>
+         <label> get page state from GitHub Gist: </label>
+         <input id="queryGist" type="text"></input>
+         <label>Gist Filename: </label>
+         <input id="queryGistFile" type="text"></input>
+         <button type="button" onClick="loadQueryGist()">get page state</button>
+       </div>
+       <br> <!-- ------------------------------------------------------------ -->
+       <div>
+         <label>Page State JSON:</label>
+         <textarea id="state" style="width: 100%" rows="10"></textarea>
+       </div>
        <br>
-       <label>Page Data JSON (for Gist):</label>
-       <textarea id="state" style="width: 100%" rows="10" readonly></textarea>
+       <button onclick="setState()">load page state</button>
      </div>
    </fieldset>
 
@@ -162,15 +171,32 @@
 
     <script type="text/javascript" src="index.js"></script>
     <script>
-      function getState() {
-          var currentModel =
-              { query             : document.getElementById("query").value.replace(/(\r\n|\n|\r)/gm,"\\n")
-              , inv               : inputTable.getData()
-              , selectedQueryIndex: document.getElementById("queryName").selectedIndex
-              , actionBindings    : actionTable.getData()
-              };
-          document.getElementById("state").value = jsDump.parse(currentModel);
-      }
+
+    CodeMirror.defineSimpleMode("simplemode" , {
+    start:
+    [ {regex: /(?!(is|startsWith|contains|of|x|exclude|having|in|everything|anyItem|and|POWER_ARMOR|WEAPON|ARMOR|APPAREL|FOOD_WATER|AID|NOTES|HOLO|AMMO|MISC|MODS|JUNKPOWER_ARMOR|WEAPON|ARMOR|APPAREL|FOOD_WATER|AID|NOTES|HOLO|AMMO|MISC|MODS|JUNK|all|none|text|kind|count|itemValue|filterFlag|currentHealth|damage|durability|maximumHealth|weight|weaponDisplayAccuracy|weaponDisplayRateOfFire|weaponDisplayRange|numLegendaryStars|itemLevel|rarity|isTradable|isSpoiled|isSetItem|isSetBonusActive|isQuestItem|isLegendary|isLearnedRecipe|isCurrency|isWeightless|isAutoScrappable|canGoIntoScrapStash|scrapAllowed))[a-zA-Z][a-zA-Z0-9]*/,token: "variable"}
+    , {regex: /(POWER_ARMOR|WEAPON|ARMOR|APPAREL|FOOD_WATER|AID|NOTES|HOLO|AMMO|MISC|MODS|JUNKPOWER_ARMOR|WEAPON|ARMOR|APPAREL|FOOD_WATER|AID|NOTES|HOLO|AMMO|MISC|MODS|JUNK)/     , token: "kind" }
+    , {regex: /\ (text|kind|count|itemValue|filterFlag|currentHealth|damage|durability|maximumHealth|weight|weaponDisplayAccuracy|weaponDisplayRateOfFire|weaponDisplayRange|numLegendaryStars|itemLevel|rarity|isTradable|isSpoiled|isSetItem|isSetBonusActive|isQuestItem|isLegendary|isLearnedRecipe|isCurrency|isWeightless|isAutoScrappable|canGoIntoScrapStash|scrapAllowed)/, token: "field"}
+    , {regex: /(is|==|startsWith|contains|of|<=|>=|>|<|\!==|\!startsWith|\!contains|\!of|\!<=|\!>=|\!>|\!<)/,token: "mode"}
+    , {regex: /(exclude|having|in|everything|anyItem|and)/, token: "keyword"}
+    , {regex: /"(?:[^\\]|\\.)*?(?:"|$)/, token: "string"}
+    , {regex: /(=|;|\[|\]|,|\*|\(|\)|\&|x)/, token: "symbol"}
+    , {regex: /(((-)?([1-9][0-9]*))|all|-all|none)/, token: "quantity"}
+    ]
+});
+
+      var editor = CodeMirror(document.getElementById("query"),{lineNumbers: true,  styleSelectedText: true, gutters: ["CodeMirror-linenumbers"]});
+      editor.on("change",function(x,y) {
+          var marks = editor.getAllMarks();
+          marks.forEach(m => m.clear());
+          editor.clearGutter("CodeMirror-linenumbers");
+      });
+      editor.on("keydown",function(x,e) {
+          if (e.keyCode == 13 && e.altKey) {
+              parse();
+          }
+      });
+
       var inputTable = new Tabulator("#inputTable", {
           data: [],
           layout:"fitColumns",
@@ -212,22 +238,20 @@
             ]
       });
 
-      function loadQueryGist() {
-          jQuery.get('https://api.github.com/gists/'+document.getElementById("queryGist").value, function(data) {
-              try{
-                  var model = JSON.parse(data.files[document.getElementById("queryGistFile").value].content);
-                  initialise(model);
-              } catch (error)
-              {
-                   initialise(exampleModel);
-              }
-           });
+      function getState() {
+          var currentModel =
+              { query             : editor.getValue().replace(/(\r\n|\n|\r)/gm,"\\n")
+              , inv               : inputTable.getData()
+              , selectedQueryIndex: document.getElementById("queryName").selectedIndex
+              , actionBindings    : actionTable.getData()
+              };
+          document.getElementById("state").value = jsDump.parse(currentModel);
       }
 
-      function buildErrorMessage(e) {
-         return e.location !== undefined
-             ? "Line " + e.location.start.line + ", column " + e.location.start.column + ": " + e.message
-             : e.message;
+      function setState() {
+          var loadStateText = document.getElementById("state").value;
+          var loadState     = JSON.parse(loadStateText);
+          initialise(loadState);
       }
 
       function tryGist() {
@@ -235,29 +259,80 @@
           if (param.length > 1)
           {
               try {
-              var tailParam = param.slice(1)
-              var params    = tailParam.split('&');
-              var gist     = params[0];
-              var gistFile = params[1];
-              document.getElementById("queryGist").value = gist;
-              document.getElementById("queryGistFile").value = gistFile;
-              loadQueryGist();
-              }
-              catch (error) {
-                  initialise(exampleModel);
-              }
+                  var tailParam = param.slice(1)
+                  var params    = tailParam.split('&');
+                  var gist     = params[0];
+                  var gistFile = params[1];
+                  document.getElementById("queryGist").value = gist;
+                  document.getElementById("queryGistFile").value = gistFile;
+                  jQuery.get( 'https://api.github.com/gists/'+document.getElementById("queryGist").value
+                            , function(data) {
+                                try{
+                                    var model = JSON.parse
+                                                (data.files[document.getElementById("queryGistFile").value].content);
+                                    document.getElementById("state").value = model;
+                                    setState();
+                                } catch (error) { }
+                            });
+              } catch (error) { }
           }
-          else {
-              initialise(exampleModel);
-          }
+      }
+
+      function setSuccessState(data) {
+          document.getElementById('compileResult').innerHTML = "<p style='color:#008000'>Compiled With No Errors!</p>";
+          document.getElementById('config').value = jsDump.parse(data);
+          populateQueryNames();
+          document.getElementById('runQuery').disabled = false;
+          outputTable.setData([]);
+          document.getElementById('generateActionConfigs').disabled = false;
+          document.getElementById('actionJSON').value = "";
+      }
+
+      function setFailState(error) {
+          document.getElementById('compileResult').innerHTML = "<p style='color:#FF0000'>"+error+"</p>";
+          document.getElementById('config').value = "";
+
+          actionTable.columnManager.columnsByField.query.definition.editorParams.values = [];
+          var select     = document.getElementById('queryName');
+          select.options.length = 0;
+
+          document.getElementById('runQuery').disabled = true;
+          outputTable.setData([]);
+          document.getElementById('generateActionConfigs').disabled = true;
+          document.getElementById('actionJSON').value = "";
       }
 
       function parse() {
          try {
-             var output = parser.parse(document.getElementById('query').value);
-             document.getElementById('config').value = jsDump.parse(output);
+             var output = parser.parse(editor.getValue());
+             if (output.nameError === "")
+             {
+                 setSuccessState({compiledQueries:output.nameCheckedTree});
+             } else {
+/*                 var errorParts = output.nameError.split(" ");
+                 var lines = lookupLine(errorParts[0]);
+                 var spn = document.createElement("SPAN");
+                 spn.innerHTML = "→";
+                 spn.style.color="red";
+                 editor.setGutterMarker(lines[0], "CodeMirror-linenumbers", spn);
+                 if (errorParts[1] === "is") {
+                     console.log(lines);
+                     var spn2 = document.createElement("SPAN");
+                     spn2.innerHTML = "→";
+                     spn2.style.color="red";
+                     editor.setGutterMarker(lines[1], "CodeMirror-linenumbers", spn2);
+                 } */
+                 setFailState("Error: " + output.nameError);
+             }
          } catch (e) {
-             document.getElementById('config').value = buildErrorMessage(e);
+             if (e.location !== undefined) {
+                 editor.markText( { line: e.location.start.line -1, ch:e.location.start.column -1}
+                                , { line: e.location.end.line -1,   ch:e.location.end.column -1}
+                                , {className: "syntax-error"});
+                 setFailState("Error: " + e.message);
+             } else {
+                 setFailState("Error: " + e.message);
+             }
          }
       }
 
@@ -267,24 +342,37 @@
           var inputDataFixed         = inputData.map(item => ({text: item.text, kind: item.kind, quantity: parseInt(item.quantity)}));
           var configText             = document.getElementById('config').value;
           var config                 = JSON.parse(configText);
-          var outputData             = PS["Main"].evaluateCheckedConfig (config)(name)(inputDataFixed);
+          var outputData             = PS["Main"].evaluateCheckedConfig ({nameError:"",nameCheckedTree:config.compiledQueries})(name)(inputDataFixed);
           outputTable.setData(outputData);
       }
 
       function populateQueryNames () {
           var configText = document.getElementById('config').value;
           var config     = JSON.parse(configText);
-          var names      = config.nameCheckedTree.map(d => d.name);
+          var names      = config.compiledQueries.map(d => d.name);
           actionTable.columnManager.columnsByField.query.definition.editorParams.values = names;
           var select     = document.getElementById('queryName');
           select.options.length = 0;
           names.forEach(n => select.options[select.options.length] = new Option(n, n));
       }
 
+      /*
+      function lookupLine(name) {
+          var configText = editor.getValue.split("\n");
+          var lines = [];
+          for(var i = 0; i < config.compiledQueries.length; i++)
+          {
+              if (config.compiledQueries[i].name === name) {
+                  lines.push(i);
+              }
+          }
+          return lines;
+      }*/
+
       function lookup(name) {
           var configText = document.getElementById('config').value;
           var config = JSON.parse(configText);
-          var matchingDefs = config.nameCheckedTree.filter( d => d.name == name);
+          var matchingDefs = config.compiledQueries.filter( d => d.name === name);
           if (matchingDefs.length == 1) {
               return matchingDefs[0].querys;
           } else {
@@ -317,6 +405,12 @@
 
       }
 
+      function openByName(name) {
+          var o = document.getElementById(name);
+          if (!(o.innerHTML.substring(0,3) === "[-]")) {
+              open(o);
+          }
+      }
 
       function open(o) {
         o.innerHTML = "[-]" + o.innerHTML.substring(3,o.innerHTML.length);
@@ -347,12 +441,11 @@
       }
 
       function initialise (model) {
-          document.getElementById('query').value        = model.query;
           openByName('queries');
+          editor.setValue(model.query);
           //document.getElementById("query").style.height = document.getElementById("query").scrollHeight + "px";
           inputTable.setData(model.inv);
           parse();
-          populateQueryNames();
           document.getElementById("queryName").selectedIndex = model.selectedQueryIndex;
           runQuery();
           actionTable.setData(model.actionBindings);
@@ -360,6 +453,8 @@
       }
     </script>
     <script>
+      initialise(exampleModel);
+      getState();
       tryGist();
     </script>
   </body>
