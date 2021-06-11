@@ -1729,8 +1729,8 @@ var PS = {};
               leftCount: 0,
               viewCount: v.viewCount
           })(function (exact) {
-              var $43 = exact >= 0;
-              if ($43) {
+              var $41 = exact >= 0;
+              if ($41) {
                   var t = Data_Ord.min(Data_Ord.ordInt)(exact)(v.leftCount);
                   return {
                       leftCount: v.leftCount - t | 0,
@@ -1768,7 +1768,7 @@ var PS = {};
                   if (v4 instanceof Data_Maybe.Just) {
                       return v4.value0 === 0;
                   };
-                  throw new Error("Failed pattern match at Main (line 268, column 29 - line 270, column 49): " + [ v4.constructor.name ]);
+                  throw new Error("Failed pattern match at Main (line 342, column 29 - line 344, column 49): " + [ v4.constructor.name ]);
               };
               if (v1 === "of") {
                   var v4 = Data_String_Regex.regex(v2)(Data_String_Regex_Flags.noFlags);
@@ -1778,7 +1778,7 @@ var PS = {};
                   if (v4 instanceof Data_Either.Right) {
                       return Data_String_Regex.test(v4.value0)(v);
                   };
-                  throw new Error("Failed pattern match at Main (line 271, column 29 - line 273, column 50): " + [ v4.constructor.name ]);
+                  throw new Error("Failed pattern match at Main (line 345, column 29 - line 347, column 50): " + [ v4.constructor.name ]);
               };
               if (v1 === ">") {
                   return v > v2;
@@ -1807,7 +1807,7 @@ var PS = {};
                       if (v4 instanceof Data_Maybe.Just) {
                           return v4.value0 === 0;
                       };
-                      throw new Error("Failed pattern match at Main (line 280, column 34 - line 282, column 54): " + [ v4.constructor.name ]);
+                      throw new Error("Failed pattern match at Main (line 354, column 34 - line 356, column 54): " + [ v4.constructor.name ]);
                   })();
               };
               if (v1 === "of") {
@@ -1819,7 +1819,7 @@ var PS = {};
                       if (v4 instanceof Data_Either.Right) {
                           return Data_String_Regex.test(v4.value0)(v);
                       };
-                      throw new Error("Failed pattern match at Main (line 283, column 34 - line 285, column 55): " + [ v4.constructor.name ]);
+                      throw new Error("Failed pattern match at Main (line 357, column 34 - line 359, column 55): " + [ v4.constructor.name ]);
                   })();
               };
               if (v1 === "!>") {
@@ -1868,8 +1868,8 @@ var PS = {};
                   });
               };
               if (v instanceof Data_Maybe.Just) {
-                  var $68 = v.value0.head.name === queryName;
-                  if ($68) {
+                  var $66 = v.value0.head.name === queryName;
+                  if ($66) {
                       $tco_done = true;
                       return v.value0.head.query;
                   };
@@ -1900,7 +1900,7 @@ var PS = {};
           if (v instanceof Data_Maybe.Just) {
               return Data_Maybe.Nothing.value;
           };
-          throw new Error("Failed pattern match at Main (line 316, column 3 - line 319, column 57): " + [ v.constructor.name ]);
+          throw new Error("Failed pattern match at Main (line 390, column 3 - line 393, column 57): " + [ v.constructor.name ]);
       };
   };
   var flatten = function (c) {
@@ -1931,8 +1931,8 @@ var PS = {};
                       predicates: v.value0.value0.predicates,
                       quantity: mkNAll
                   } ])(function (q) {
-                      var $93 = q <= 0;
-                      if ($93) {
+                      var $91 = q <= 0;
+                      if ($91) {
                           return [ {
                               predicates: v.value0.value0.predicates,
                               quantity: mkExact(q)
@@ -1956,9 +1956,9 @@ var PS = {};
               if (v.value0 instanceof Having) {
                   return flatten(c)(new Having(v.value0.value0, new Exclude(v.value0.value1)));
               };
-              throw new Error("Failed pattern match at Main (line 173, column 3 - line 188, column 53): " + [ v.value0.constructor.name ]);
+              throw new Error("Failed pattern match at Main (line 172, column 3 - line 187, column 53): " + [ v.value0.constructor.name ]);
           };
-          throw new Error("Failed pattern match at Main (line 164, column 1 - line 164, column 43): " + [ c.constructor.name, v.constructor.name ]);
+          throw new Error("Failed pattern match at Main (line 163, column 1 - line 163, column 43): " + [ c.constructor.name, v.constructor.name ]);
       };
   };
   var flattenAll = function (c) {
@@ -1970,8 +1970,8 @@ var PS = {};
       })(c);
   };
   var flattenedCheckedConfig = function (r) {
-      var $103 = r.nameError === "";
-      if ($103) {
+      var $101 = r.nameError === "";
+      if ($101) {
           return {
               nameError: "",
               nameCheckedTree: flattenAll(r.nameCheckedTree)
@@ -1986,8 +1986,8 @@ var PS = {};
       return function (item) {
           return Data_Array.foldl(function (item$prime) {
               return function (f) {
-                  var $104 = matchPredicates(f.predicates)(item$prime);
-                  if ($104) {
+                  var $102 = matchPredicates(f.predicates)(item$prime);
+                  if ($102) {
                       var r = take(f.quantity)({
                           leftCount: item$prime.leftCount,
                           viewCount: item$prime.viewCount
@@ -2003,45 +2003,6 @@ var PS = {};
           })(item)(fs);
       };
   };
-  var convertKind = function (v) {
-      if (v === "POWER_ARMOR") {
-          return "0";
-      };
-      if (v === "WEAPON") {
-          return "2";
-      };
-      if (v === "ARMOR") {
-          return "8";
-      };
-      if (v === "APPAREL") {
-          return "16";
-      };
-      if (v === "FOOD_WATER") {
-          return "32";
-      };
-      if (v === "AID") {
-          return "64";
-      };
-      if (v === "NOTES") {
-          return "1024";
-      };
-      if (v === "HOLO") {
-          return "65536";
-      };
-      if (v === "AMMO") {
-          return "32768";
-      };
-      if (v === "MISC") {
-          return "4096";
-      };
-      if (v === "MODS") {
-          return "16384";
-      };
-      if (v === "JUNK") {
-          return "8192";
-      };
-      return "";
-  };
   var convertToItemList = function (inputItems) {
       var v = Data_Array.uncons(inputItems);
       if (v instanceof Data_Maybe.Nothing) {
@@ -2055,51 +2016,12 @@ var PS = {};
                   field: "text",
                   value: v.value0.head.text
               }, {
-                  field: "filterFlag",
-                  value: convertKind(v.value0.head.kind)
+                  field: "kind",
+                  value: v.value0.head.kind
               } ]
           })(convertToItemList(v.value0.tail));
       };
-      throw new Error("Failed pattern match at Main (line 379, column 5 - line 386, column 33): " + [ v.constructor.name ]);
-  };
-  var convertFilterFlag = function (v) {
-      if (v === "0") {
-          return "POWER_ARMOR";
-      };
-      if (v === "2") {
-          return "WEAPON";
-      };
-      if (v === "8") {
-          return "ARMOR";
-      };
-      if (v === "16") {
-          return "APPAREL";
-      };
-      if (v === "32") {
-          return "FOOD_WATER";
-      };
-      if (v === "64") {
-          return "AID";
-      };
-      if (v === "1024") {
-          return "NOTES";
-      };
-      if (v === "65536") {
-          return "HOLO";
-      };
-      if (v === "32768") {
-          return "AMMO";
-      };
-      if (v === "4096") {
-          return "MISC";
-      };
-      if (v === "16384") {
-          return "MODS";
-      };
-      if (v === "8192") {
-          return "JUNK";
-      };
-      return "";
+      throw new Error("Failed pattern match at Main (line 423, column 5 - line 430, column 33): " + [ v.constructor.name ]);
   };
   var convertFromItemList = function (items) {
       var v = Data_Array.uncons(items);
@@ -2107,8 +2029,8 @@ var PS = {};
           return [  ];
       };
       if (v instanceof Data_Maybe.Just) {
-          var $112 = v.value0.head.viewCount <= 0;
-          if ($112) {
+          var $108 = v.value0.head.viewCount <= 0;
+          if ($108) {
               return convertFromItemList(v.value0.tail);
           };
           var v1 = getValue(v.value0.head)("text");
@@ -2116,22 +2038,22 @@ var PS = {};
               return convertFromItemList(v.value0.tail);
           };
           if (v1 instanceof Data_Maybe.Just) {
-              var v2 = getValue(v.value0.head)("filterFlag");
+              var v2 = getValue(v.value0.head)("kind");
               if (v2 instanceof Data_Maybe.Nothing) {
                   return convertFromItemList(v.value0.tail);
               };
               if (v2 instanceof Data_Maybe.Just) {
                   return Data_Array.cons({
                       text: v1.value0,
-                      kind: convertFilterFlag(v2.value0),
+                      kind: v2.value0,
                       quantity: v.value0.head.viewCount
                   })(convertFromItemList(v.value0.tail));
               };
-              throw new Error("Failed pattern match at Main (line 368, column 26 - line 373, column 57): " + [ v2.constructor.name ]);
+              throw new Error("Failed pattern match at Main (line 412, column 26 - line 417, column 57): " + [ v2.constructor.name ]);
           };
-          throw new Error("Failed pattern match at Main (line 366, column 11 - line 373, column 57): " + [ v1.constructor.name ]);
+          throw new Error("Failed pattern match at Main (line 410, column 11 - line 417, column 57): " + [ v1.constructor.name ]);
       };
-      throw new Error("Failed pattern match at Main (line 359, column 5 - line 373, column 57): " + [ v.constructor.name ]);
+      throw new Error("Failed pattern match at Main (line 403, column 5 - line 417, column 57): " + [ v.constructor.name ]);
   };
   var _nameCheckQuery = function (knowns) {
       return function (v) {
@@ -2156,12 +2078,12 @@ var PS = {};
               if (v2 instanceof Data_Maybe.Just) {
                   return [  ];
               };
-              throw new Error("Failed pattern match at Main (line 157, column 4 - line 159, column 19): " + [ v2.constructor.name ]);
+              throw new Error("Failed pattern match at Main (line 156, column 4 - line 158, column 19): " + [ v2.constructor.name ]);
           };
           if (v instanceof Having) {
               return _nameCheckQuery(knowns)(v.value1);
           };
-          throw new Error("Failed pattern match at Main (line 150, column 1 - line 150, column 53): " + [ knowns.constructor.name, v.constructor.name ]);
+          throw new Error("Failed pattern match at Main (line 149, column 1 - line 149, column 53): " + [ knowns.constructor.name, v.constructor.name ]);
       };
   };
   var _nameCheckConfig = function ($copy_names) {
@@ -2177,8 +2099,8 @@ var PS = {};
               };
               if (v instanceof Data_Maybe.Just) {
                   var chkHead = _nameCheckQuery(names)(v.value0.head.query);
-                  var $131 = Data_Array.length(chkHead) > 0;
-                  if ($131) {
+                  var $127 = Data_Array.length(chkHead) > 0;
+                  if ($127) {
                       $tco_done = true;
                       return new Data_Maybe.Just({
                           at: v.value0.head.name,
@@ -2189,7 +2111,7 @@ var PS = {};
                   $copy_c = v.value0.tail;
                   return;
               };
-              throw new Error("Failed pattern match at Main (line 142, column 3 - line 148, column 53): " + [ v.constructor.name ]);
+              throw new Error("Failed pattern match at Main (line 141, column 3 - line 147, column 53): " + [ v.constructor.name ]);
           };
           while (!$tco_done) {
               $tco_result = $tco_loop($tco_var_names, $copy_c);
@@ -2212,7 +2134,7 @@ var PS = {};
                   if (v instanceof Data_Maybe.Just) {
                       return v.value0.querys;
                   };
-                  throw new Error("Failed pattern match at Main (line 228, column 13 - line 230, column 35): " + [ v.constructor.name ]);
+                  throw new Error("Failed pattern match at Main (line 302, column 13 - line 304, column 35): " + [ v.constructor.name ]);
               })();
               return Data_Functor.map(Data_Functor.functorArray)(evalItem(fs))(items);
           };
@@ -2259,9 +2181,9 @@ var PS = {};
                       $tco_done = true;
                       return new Data_Maybe.Just(v.value0.head.name);
                   };
-                  throw new Error("Failed pattern match at Main (line 130, column 8 - line 132, column 35): " + [ v1.constructor.name ]);
+                  throw new Error("Failed pattern match at Main (line 129, column 8 - line 131, column 35): " + [ v1.constructor.name ]);
               };
-              throw new Error("Failed pattern match at Main (line 127, column 4 - line 132, column 35): " + [ v.constructor.name ]);
+              throw new Error("Failed pattern match at Main (line 126, column 4 - line 131, column 35): " + [ v.constructor.name ]);
           };
           while (!$tco_done) {
               $tco_result = $tco_loop($tco_var_names, $copy_c);
@@ -2274,7 +2196,7 @@ var PS = {};
       var v = checkDuplicates(c);
       if (v instanceof Data_Maybe.Just) {
           return {
-              nameError: "Name Error: the definition " + (v.value0 + " is already defined!"),
+              nameError: v.value0 + " is already defined!",
               nameCheckedTree: [  ]
           };
       };
@@ -2288,13 +2210,13 @@ var PS = {};
           };
           if (v1 instanceof Data_Maybe.Just) {
               return {
-                  nameError: "Name Error at " + (v1.value0.at + (" : the names " + (Data_Show.show(Data_Show.showArray(Data_Show.showString))(v1.value0.unknownNames) + " are not defined!"))),
+                  nameError: v1.value0.at + (" has undefined names " + Data_Show.show(Data_Show.showArray(Data_Show.showString))(v1.value0.unknownNames)),
                   nameCheckedTree: [  ]
               };
           };
-          throw new Error("Failed pattern match at Main (line 113, column 16 - line 118, column 32): " + [ v1.constructor.name ]);
+          throw new Error("Failed pattern match at Main (line 112, column 16 - line 117, column 32): " + [ v1.constructor.name ]);
       };
-      throw new Error("Failed pattern match at Main (line 109, column 3 - line 118, column 32): " + [ v.constructor.name ]);
+      throw new Error("Failed pattern match at Main (line 109, column 3 - line 117, column 32): " + [ v.constructor.name ]);
   };
   exports["mkAll"] = mkAll;
   exports["mkNAll"] = mkNAll;
@@ -2324,8 +2246,6 @@ var PS = {};
   exports["evaluate"] = evaluate;
   exports["evaluateCheckedConfig"] = evaluateCheckedConfig;
   exports["getValue"] = getValue;
-  exports["convertFilterFlag"] = convertFilterFlag;
-  exports["convertKind"] = convertKind;
   exports["convertFromItemList"] = convertFromItemList;
   exports["convertToItemList"] = convertToItemList;
   exports["main"] = main;
