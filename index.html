@@ -42,7 +42,7 @@
                  , {text: "Key2",         kind:"MISC"      , quantity:1}
                    , {text: "Spoiled Meat", kind:"FOOD_WATER", quantity:11} ]
           , selectedQueryIndex: 1
-          , actionBindings: [{hotkey:49,action:"transfer",query:"NewStuff1"}]
+          , actionBindings: [{hotkey:49,character:"character1",query:"NewStuff1"}]
           };
    </script>
     <!-- ------------------------------------------------------------ -->
@@ -91,7 +91,7 @@
         <p id="configs" style="font-weight: bold" onClick="collapse(this)">[+] Compiled Query</p>
         <div style="display:none">
           <textarea id="config" style="width: 100%" rows="10" readonly></textarea>
-          <a style="text-decoration: underline" href='https://www.jsonschemavalidator.net/s/cRcD4uem'>[JSON Schema Here]</a>
+          <a style="text-decoration: underline" href='https://www.jsonschemavalidator.net/s/AlMfp2TC'>[JSON Schema Here]</a>
         </div>
      </div>
     </fieldset>
@@ -131,7 +131,6 @@
           <button id="addRowAction" onClick="actionTable.addRow({})">Add</button>
           <button id="clearAction" onClick="actionTable.clearData()">Clear</button>
           <a style="text-decoration: underline" href="https://www.makeflashgames.com/resources/keycodes.php">[keycodes]</a>
-          <a style="text-decoration: underline" href="https://www.jsonschemavalidator.net/s/LjhEceNX">[validate bindings JSON here]</a>
         </div>
         <div id="actionTable"></div>
         <br>
@@ -139,6 +138,7 @@
         <br>
         <button id="generateActionConfigs" onclick="generateActionConfigs()">Generate Action Configs</button>
         <textarea id="actionJSON" style="width: 100%" rows="10" readonly></textarea>
+        <a style="text-decoration: underline" href="https://www.jsonschemavalidator.net/s/SSLzqBnu">[JSON Schema here]</a>
       </div>
     </fieldset>
 
@@ -230,12 +230,12 @@
           resizableRows:true,
           columns:
           [ {title:"Hotkey", field:"hotkey", editor:"input",validator:["min:1", "max:1000", "integer"]}
-            , {title:"Action", field: "action", editor:"select", editorParams:{values:["transfer", "drop", "consume"]}}
-            , {title:"Query", field: "query", editor:"select", editorParams:{values:[]}}
-            , {formatter:"buttonCross", width:40, align:"center", cellClick:function(e, cell){
-               cell.getRow().delete();
+          , {title:"Character", field: "character"}
+          , {title:"Query", field: "query", editor:"select", editorParams:{values:[]}}
+          , {formatter:"buttonCross", width:40, align:"center", cellClick:function(e, cell){
+              cell.getRow().delete();
               }}
-            ]
+          ]
       });
 
       function getState() {
@@ -307,7 +307,7 @@
              var output = parser.parse(editor.getValue());
              if (output.nameError === "")
              {
-                 setSuccessState({compiledQueries:output.nameCheckedTree});
+                 setSuccessState({compiledQueries:output.optimisedConfig});
              } else {
 /*                 var errorParts = output.nameError.split(" ");
                  var lines = lookupLine(errorParts[0]);
@@ -342,7 +342,7 @@
           var inputDataFixed         = inputData.map(item => ({text: item.text, kind: item.kind, quantity: parseInt(item.quantity)}));
           var configText             = document.getElementById('config').value;
           var config                 = JSON.parse(configText);
-          var outputData             = PS["Main"].evaluateCheckedConfig ({nameError:"",nameCheckedTree:config.compiledQueries})(name)(inputDataFixed);
+          var outputData             = PS["Main"].evaluateOptimisedConfig ({nameError:"",optimisedConfig:config.compiledQueries})(name)(inputDataFixed);
           outputTable.setData(outputData);
       }
 
@@ -385,7 +385,7 @@
           var bindings = [];
           hotkeyBindings.forEach(o => bindings.push(
                                         { hotkey: o.hotkey
-                                        , action: o.action
+                                        , character: o.character
                                         , query: lookup(o.query)
                                         }));
           if (document.getElementById("forStash").checked)

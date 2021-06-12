@@ -1,16 +1,15 @@
 { "$schema": "http://json-schema.org/draft-07/schema"
 , "type": "object"
-, "required": [ "nameError", "nameCheckedTree" ]
+, "required": [ "compiledQueries" ]
 , "properties":
-    { "nameError": { "type": "string" }
-    , "nameCheckedTree":
+    { "compiledQueries":
         { "type": "array"
         , "items":
             { "type": "object"
-            , "required": [ "name", "selectors" ]
+            , "required": [ "name", "querys" ]
             , "properties":
                 { "name": { "type": "string" }
-                , "selectors":
+                , "querys":
                     { "type": "array"
                     , "items":
                         { "type": "object"
@@ -20,11 +19,19 @@
                                 { "type": "array"
                                 , "items":
                                     { "type": "object"
-                                    , "required": [ "field", "mode", "value" ]
+                                    , "required": [ "field", "modeValues" ]
                                     , "properties":
                                         { "field": { "type": "string" }
-                                        , "mode": { "type": "string"}
-                                        , "value": { "type": "string" }
+                                        , "modeValues": { "type": "array"
+                                                        , "items":
+                                                          { "type":"object"
+                                                          , "required": ["mode","value" ]
+                                                          , "properties":
+                                                            { "mode": { "type": "string"}
+                                                            , "value": { "type": "string" }
+                                                            }
+                                                          }
+                                                        }
                                         }
                                     }
                                 }

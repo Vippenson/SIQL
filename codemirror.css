@@ -119,12 +119,12 @@
 
 .cm-s-default .cm-keyword {color: #eedd82;} /* {color: #00ffff} */
 .cm-s-default .cm-symbol {color: #eedd82;}
-.cm-s-default .cm-mode {color: #87CEFA}
-.cm-s-default .cm-field {font-style: italic;} /* {color: #98fb98;} */
+.cm-s-default .cm-field {color: #87CEFA;}
+.cm-s-default .cm-mode  {color: #98fb98;}
 .cm-s-default .cm-string {color: #FFA07A;}
 .cm-s-default .cm-kind {font-style: italic;color: #FFA07A;}
 .cm-s-default .cm-quantity {text-decoration:underline;}
-.cm-s-default .cm-space {}  /* {color: #87CEFA} */
+.cm-s-default .cm-space {}
 .cm-s-default .cm-variable {}
 
 .cm-s-default .cm-error {color: #f00;}
